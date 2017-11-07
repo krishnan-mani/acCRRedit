@@ -1,0 +1,9 @@
+{
+  "name": "test-crr",
+  "region": "ap-south-1",
+  "hasParameters": true,
+  "capabilities": [
+    "CAPABILITY_IAM"
+  ],
+  "action": "recreate"
+}

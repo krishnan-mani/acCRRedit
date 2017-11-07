@@ -1,0 +1,3 @@
+path: stacks
+templates:
+  - 03-put-files-in-s3

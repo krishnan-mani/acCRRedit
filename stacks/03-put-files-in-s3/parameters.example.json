@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "FileCount",
+    "ParameterValue": "10"
+  },
+  {
+    "ParameterKey": "VpcId",
+    "ParameterValue": "REPLACE-ME-VpcId"
+  },
+  {
+    "ParameterKey": "Bucket",
+    "ParameterValue": "REPLACE-ME-Bucket"
+  },
+  {
+    "ParameterKey": "SubnetId",
+    "ParameterValue": "REPLACE-ME-SubnetId"
+  },
+  {
+    "ParameterKey": "FileSize",
+    "ParameterValue": "1024"
+  }
+]

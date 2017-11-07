@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Launches a group of instances to generate and copy a file payload to s3 (for CRR testing)
+
+Parameters:
+  VpcId:
+    Description: Id for VPC
+    Type: AWS::EC2::VPC::Id
+  SubnetId:
+    Description: Subnet to launch the instance in
+    Type: AWS::EC2::Subnet::Id
+  FileSize:
+    Description: Size of files (in KB)
+    Type: Number
+    Default: 1024
+    MaxValue: 1024
+    MinValue: 128
+  FileCount:
+    Description: Number of files to be generated
+    Type: Number
+    Default: 10
+    MinValue: 5
+    MaxValue: 10
+  Bucket:
+    Description: Bucket to copy files to
+    Type: String
+
+Outputs:
+  instanceIp:
+    Value: !GetAtt [ appInstance, PublicIp ]
+
+Resources:
+  securityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow-ssh
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+  appInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sdt"
+          Ebs:
+            DeleteOnTermination: "true"
+            VolumeType: sc1
+            VolumeSize: "3000"
+      InstanceType: m4.large
+      ImageId:
+        !FindInMap [ RegionMap, !Ref 'AWS::Region', AMI ]
+      IamInstanceProfile:
+        Ref: instanceProfile
+      KeyName: km
+      SecurityGroupIds:
+        - Ref: securityGroup
+      SubnetId:
+        Ref: SubnetId
+      Tags:
+        -
+          Key: Name
+          Value: put-files-s3
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+
+            echo "Mounting volume"
+            export BASE_PATH="/copy-to-s3"
+            mkfs -t ext4 /dev/xvdt
+            mkdir "$BASE_PATH"
+            mount /dev/xvdt "$BASE_PATH"
+
+            echo "Generating files"
+            export DATE_DAY=`date +%Y/%m/%d`
+            mkdir -p "$BASE_PATH/$DATE_DAY"
+            export DATE_TIME=`date +%H:%M`
+            export FILENAME="$BASE_PATH/$DATE_DAY/file_$(hostname)_$DATE_TIME"
+            seq -w 1 ${FileCount} | xargs -n 1 -P ${FileCount} -I % dd if=/dev/urandom of=$FILENAME.% bs=${FileSize}K count=2048
+
+            echo "copying files to s3"
+            aws configure set region ${AWS::Region}
+            time aws --region ${AWS::Region} s3 cp --recursive --quiet $BASE_PATH s3://${Bucket}/files/
+
+  bucketWriteRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        -
+          PolicyName: writer
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              -
+                Effect: Allow
+                Resource:
+                  - !Join [ "", [ "arn:aws:s3:::", !Ref 'Bucket' ]]
+                  - !Join [ "", [ "arn:aws:s3:::", !Ref 'Bucket', '/*' ]]
+                Action:
+                  - s3:Put*
+                  - s3:List*
+  instanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        -
+          Ref: bucketWriteRole
+
+Mappings:
+  RegionMap:
+    ap-south-1:
+      AMI: ami-47205e28
+    us-east-1:
+      AMI: ami-a4c7edb2
+    us-east-2:
+      AMI: ami-8a7859ef
+    us-west-1:
+      AMI: ami-327f5352
+    us-west-2:
+      AMI: ami-6df1e514
+    ca-central-1:
+      AMI: ami-a7aa15c3
+    eu-west-1:
+      AMI: ami-d7b9a2b1
+    eu-west-2:
+      AMI: ami-ed100689
+    eu-central-1:
+      AMI: ami-82be18ed
+    ap-southeast-1:
+      AMI: ami-77af2014
+    ap-southeast-2:
+      AMI: ami-10918173
+    ap-northeast-2:
+      AMI: ami-e21cc38c
+    ap-northeast-1:
+      AMI: ami-3bd3c45c
+    sa-east-1:
+      AMI: ami-87dab1eb
+
