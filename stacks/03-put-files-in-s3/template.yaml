@@ -1,13 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Launches a group of instances to generate and copy a file payload to s3 (for CRR testing)
+Description: Launches a group of instances to generate and copy some large files to s3 (say, for CRR testing)
 
 Parameters:
-  VpcId:
-    Description: Id for VPC
-    Type: AWS::EC2::VPC::Id
-  SubnetId:
-    Description: Subnet to launch the instance in
-    Type: AWS::EC2::Subnet::Id
+  SubnetIds:
+    Description: Subnets to launch the instance in
+    Type: String
   FileSize:
     Description: Size of files (in KB)
     Type: Number
@@ -23,45 +20,29 @@ Parameters:
   Bucket:
     Description: Bucket to copy files to
     Type: String
-
-Outputs:
-  instanceIp:
-    Value: !GetAtt [ appInstance, PublicIp ]
+  SpotPrice:
+    Description: A price to bid (in USD)
+    Type: String
+    Default: "0.08"
 
 Resources:
-  securityGroup:
-    Type: AWS::EC2::SecurityGroup
+  launchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      GroupDescription: allow-ssh
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 22
-        ToPort: 22
-        CidrIp: 0.0.0.0/0
-  appInstance:
-    Type: AWS::EC2::Instance
-    Properties:
+      AssociatePublicIpAddress: false
       BlockDeviceMappings:
         - DeviceName: "/dev/sdt"
           Ebs:
             DeleteOnTermination: "true"
             VolumeType: sc1
-            VolumeSize: "3000"
+            VolumeSize: "1000"
       InstanceType: m4.large
       ImageId:
         !FindInMap [ RegionMap, !Ref 'AWS::Region', AMI ]
       IamInstanceProfile:
         Ref: instanceProfile
-      KeyName: km
-      SecurityGroupIds:
-        - Ref: securityGroup
-      SubnetId:
-        Ref: SubnetId
-      Tags:
-        -
-          Key: Name
-          Value: put-files-s3
+      SpotPrice:
+        Ref: SpotPrice
       UserData:
         Fn::Base64:
           !Sub |
@@ -83,6 +64,28 @@ Resources:
             echo "copying files to s3"
             aws configure set region ${AWS::Region}
             time aws --region ${AWS::Region} s3 cp --recursive --quiet $BASE_PATH s3://${Bucket}/files/
+
+  putFilesGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchConfigurationName:
+        Ref: launchConfiguration
+      MinSize: "5"
+      MaxSize: "5"
+      MetricsCollection:
+        -
+          Granularity: "1Minute"
+          Metrics:
+            - "GroupMinSize"
+            - "GroupMaxSize"
+      Tags:
+        -
+          Key: Name
+          Value: put-files-in-s3
+          PropagateAtLaunch: true
+      VPCZoneIdentifier:
+        -
+          Ref: SubnetIds
 
   bucketWriteRole:
     Type: AWS::IAM::Role

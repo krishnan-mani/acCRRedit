@@ -1,19 +1,19 @@
 [
   {
-    "ParameterKey": "FileCount",
-    "ParameterValue": "10"
+    "ParameterKey": "SpotPrice",
+    "ParameterValue": "0.08"
   },
   {
-    "ParameterKey": "VpcId",
-    "ParameterValue": "REPLACE-ME-VpcId"
+    "ParameterKey": "FileCount",
+    "ParameterValue": "10"
   },
   {
     "ParameterKey": "Bucket",
     "ParameterValue": "REPLACE-ME-Bucket"
   },
   {
-    "ParameterKey": "SubnetId",
-    "ParameterValue": "REPLACE-ME-SubnetId"
+    "ParameterKey": "SubnetIds",
+    "ParameterValue": "REPLACE-ME-SubnetIds"
   },
   {
     "ParameterKey": "FileSize",
