@@ -1,7 +1,11 @@
 [
   {
+    "ParameterKey": "FleetSize",
+    "ParameterValue": "20"
+  },
+  {
     "ParameterKey": "SpotPrice",
-    "ParameterValue": "0.08"
+    "ParameterValue": "0.10"
   },
   {
     "ParameterKey": "FileCount",
@@ -12,11 +16,11 @@
     "ParameterValue": "REPLACE-ME-Bucket"
   },
   {
-    "ParameterKey": "SubnetIds",
-    "ParameterValue": "REPLACE-ME-SubnetIds"
+    "ParameterKey": "FileSizeInMB",
+    "ParameterValue": "2048"
   },
   {
-    "ParameterKey": "FileSize",
-    "ParameterValue": "1024"
+    "ParameterKey": "SubnetIds",
+    "ParameterValue": "REPLACE-ME-SubnetIds"
   }
 ]

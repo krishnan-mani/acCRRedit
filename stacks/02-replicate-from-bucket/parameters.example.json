@@ -1,0 +1,6 @@
+[
+  {
+    "ParameterKey": "replicateToBucket",
+    "ParameterValue": "REPLACE-ME-replicateToBucket"
+  }
+]
