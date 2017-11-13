@@ -6,6 +6,11 @@ Parameters:
     Description: Bucket that the inventory will be saved to
     Type: String
 
+Outputs:
+  replicateToBucket:
+    Description: Bucket created by this stack that we will replicate to
+    Value: !Ref 'S3Bucket'
+
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
