@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 Bucket with Inventory Configuration
+
+Parameters:
+  inventoryDestination:
+    Description: Bucket that the inventory will be saved to
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      InventoryConfigurations:
+        - Id: InventoryConfigurationId
+          Destination:
+            BucketArn: !Join ['', ['arn:aws:s3:::', !Ref inventoryDestination ]]
+            Format: CSV
+            Prefix: InventoryDestinationPrefix
+          Enabled: 'true'
+          IncludedObjectVersions: Current
+          Prefix: InventoryConfigurationPrefix
+          ScheduleFrequency: Daily
