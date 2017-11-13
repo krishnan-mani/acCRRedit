@@ -18,7 +18,7 @@ Parameters:
     MinValue: 5
     MaxValue: 10
   FleetSize:
-    Description: Number of instances in fleet (defaults to 50, therefore, 1 TB copied to S3)
+    Description: Number of instances in fleet (defaults to 20, therefore, 400 GB copied to S3)
     Type: Number
     Default: 20
     MinValue: 5
@@ -29,7 +29,6 @@ Parameters:
   SpotPrice:
     Description: A price to bid (in USD)
     Type: String
-    Default: "0.10"
 
 Resources:
 
@@ -42,7 +41,7 @@ Resources:
           Ebs:
             DeleteOnTermination: "true"
             VolumeType: sc1
-            VolumeSize: "300"
+            VolumeSize: "500"
       InstanceType: m4.large
       ImageId:
         !FindInMap [ RegionMap, !Ref 'AWS::Region', AMI ]

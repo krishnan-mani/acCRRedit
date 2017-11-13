@@ -2,5 +2,8 @@
   "name": "replicate-from-bucket",
   "action": "create",
   "region": "ap-south-1",
-  "hasParameters": true
+  "hasParameters": true,
+  "capabilities": [
+    "CAPABILITY_IAM"
+  ]
 }

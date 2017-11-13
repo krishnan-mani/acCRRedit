@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "SpotPrice",
-    "ParameterValue": "0.10"
+    "ParameterValue": "REPLACE-ME-SpotPrice"
   },
   {
     "ParameterKey": "FileCount",
