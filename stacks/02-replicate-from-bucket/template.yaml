@@ -10,7 +10,6 @@ Parameters:
 Resources:
   replicateFromBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
     Properties:
       ReplicationConfiguration:
         Role: !GetAtt [WorkItemBucketBackupRole, Arn]
