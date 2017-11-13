@@ -4,7 +4,7 @@ About
 - Using the CloudFormation templates, you can provision the following:
   - A bucket (say, in AWS region 'ap-northeast-1' aka Tokyo) that will be the 'destination' in S3-CRR
   - Another bucket (say, in AWS region 'ap-south-1' aka Mumbai) that will be the 'source' in S3-CRR
-  - A stack consisting of a short-lived fleet of EC2 instances that generate and put a number of "large" files into the source bucket
+  - A stack (intended to be short-lived) consisting of a fleet of EC2 spot instances that generate and put a number of "large" files into the source bucket
   
 - There are good reasons why these are separate stacks (and templates), and must be provisioned in a specific order:
   - The bucket to replicate to (aka 'destination') will be provisioned first in some AWS region (the first stack), say "ap-northeast-1".
@@ -80,13 +80,15 @@ Template and example parameters are in [03-put-files-in-s3](stacks/03-put-files-
 
 - Step 4: Monitoring and cleanup
 
+Provided that the spot bid is successful, the desired number of EC2 instances will be provisioned and they may take several minutes to generate, and then put files into the 'source' s3 bucket. This should not take more than 30 minutes overall, but YMMV.
+
 ```bash
 # Inspect the source bucket for files copied in by the 'put-files-in-s3' EC2 instance fleet
 
 $ aws --region ap-south-1 s3 ls s3://my-source-bucket/files/
 
 ```
-You can delete the stack that was provisioned to create a fleet of EC2 instances to generate the files
+You can delete the stack that was provisioned to create a fleet of EC2 instances to generate the files.
 
 - Step 5: Monitor the progress of S3 CRR.
 
