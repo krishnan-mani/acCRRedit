@@ -1,6 +1,6 @@
 {
   "name": "replicate-from-bucket",
-  "action": "create",
+  "action": "update",
   "region": "ap-south-1",
   "hasParameters": true,
   "capabilities": [

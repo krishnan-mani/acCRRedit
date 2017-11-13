@@ -35,7 +35,7 @@ Resources:
   launchConfiguration:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      AssociatePublicIpAddress: false
+      AssociatePublicIpAddress: true
       BlockDeviceMappings:
         - DeviceName: "/dev/sdt"
           Ebs:

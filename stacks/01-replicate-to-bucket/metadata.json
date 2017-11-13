@@ -1,6 +1,6 @@
 {
   "name": "replicate-to-bucket",
-  "action": "create",
+  "action": "update",
   "region": "ap-northeast-1",
   "hasParameters": true
 }
