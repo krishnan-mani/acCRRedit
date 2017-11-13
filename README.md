@@ -5,6 +5,7 @@ See [HOW-TO](HOW-TO.md) for instructions.
 TODO
 ====
 
+- [ ] Must verify that the inventory is configured correctly and works!
 - [ ] support a mix of files by file size, file count, and file organisation by folders and depth of nesting
 - [ ] calculate fleet size, etc. based on total size of files to be generated
 - [ ] use multi-part upload and other speedier ways to upload large files to s3
