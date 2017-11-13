@@ -56,18 +56,18 @@ Template and example parameters are in [02-replicate-from-bucket](stacks/02-repl
 
 - Step 3: Provision the EC2 fleet to generate files and put them into the 'source' S3 bucket
 
-Template and example parameters are in [02-replicate-from-bucket](stacks/02-replicate-from-bucket)
+Template and example parameters are in [03-put-files-in-s3](stacks/03-put-files-in-s3)
 
 - Step 4: Cleanup
 
 You can delete the stack that was provisioned to create a fleet of EC2 instances to generate the files
 
-Step 5: Monitor the progress of S3 CRR.
+- Step 5: Monitor the progress of S3 CRR.
 
 
 Costs incurred
 ====
 
-- Run a fleet of EC2 instances for a short duration (typically 30 minutes)
+- Running a fleet of EC2 instances for a short duration (typically 30 minutes)
 - S3 CRR data transfer
 - S3 storage
