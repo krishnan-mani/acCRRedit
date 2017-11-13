@@ -5,5 +5,5 @@
   "capabilities": [
     "CAPABILITY_IAM"
   ],
-  "action": "recreate"
+  "action": "update"
 }
