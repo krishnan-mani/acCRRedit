@@ -6,6 +6,11 @@ About
   - Another bucket (say, in AWS region 'ap-south-1' aka Mumbai) that will be the 'source' in S3-CRR
   - A stack consisting of a short-lived fleet of EC2 instances that generate and put a number of "large" files into the source bucket
   
+- There are good reasons why these are separate stacks (and templates), and must be provisioned in a specific order:
+  - The bucket to replicate to (aka 'destination') will be provisioned first in some AWS region (the first stack), say "ap-northeast-1".
+  - The bucket to replicate from (aka 'source') will be provisioned afterwards, in a different AWS region (the second stack), say "ap-south-1", and presumes that the 'destination' bucket exists.
+  - The stack that will provision a short-lived fleet of EC2 instances to generate some files and put the same into the S3 bucket will be provisioned in the same region as the 'source' bucket, say "ap-south-1", and presumes that the 'source' bucket exists.
+  
 Steps
 ====
 
@@ -24,7 +29,7 @@ $ aws --region ap-south-1 cloudformation create-stack \
 
 ```
 
-- To monitor a stack, you may use the following
+- To monitor a stack, you may use:
 
 ```bash
 
@@ -36,7 +41,7 @@ $ aws --region ap-south-1 cloudformation describe-stack-events \
     
 ```
 
-- To delete a stack, you may use something like
+- To delete a stack, you may use:
 
 ```bash
 
@@ -44,8 +49,6 @@ $ aws --region ap-south-1 cloudformation delete-stack \
     --stack-name my-stack
 
 ```
-
-
 - Step 1: Provision the bucket to replicate to
 
 Template and example parameters are in [01-replicate-to-bucket](stacks/01-replicate-to-bucket)
@@ -58,16 +61,23 @@ Template and example parameters are in [02-replicate-from-bucket](stacks/02-repl
 
 Template and example parameters are in [03-put-files-in-s3](stacks/03-put-files-in-s3)
 
-- Step 4: Cleanup
+- Step 4: Monitoring and cleanup
 
+```bash
+# Inspect the source bucket for files copied in by the 'put-files-in-s3' EC2 instance fleet
+
+$ aws --region ap-south-1 s3 ls s3://my-source-bucket/files/
+
+```
 You can delete the stack that was provisioned to create a fleet of EC2 instances to generate the files
 
 - Step 5: Monitor the progress of S3 CRR.
 
+[S3 Inventory](http://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html) is turned on for the 'destination' S3 bucket, so you can look at the inventory files when generated to verify which files replicated to the bucket and when.
 
 Costs incurred
 ====
 
-- Running a fleet of EC2 instances for a short duration (typically 30 minutes)
+- EC2 instances run for a short duration (typically 30 minutes) at the spot price
 - S3 CRR data transfer
 - S3 storage
