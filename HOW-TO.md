@@ -14,6 +14,9 @@ About
 Steps
 ====
 
+General instructions (for CloudFormation)
+=====
+
 General instructions to provision CloudFormation stacks:
 
 - Given a template, you can provision a CloudFormation stack as follows:
@@ -25,9 +28,11 @@ $ aws --region ap-south-1 cloudformation create-stack \
     --template-body file://template.yaml \
     --parameters \
     ParameterKey=foo,ParameterValue=bar \
-    --capabilities CAPABILITY_IAM
 
 ```
+- If a stack is creating or modifying IAM resources or permissions, you may need to acknowledge it by supplying capabilities, by adding the following argument to the ```create-stack``` call
+
+``` --capabilities CAPABILITY_IAM ```
 
 - To monitor a stack, you may use:
 
@@ -40,6 +45,7 @@ $ aws --region ap-south-1 cloudformation describe-stack-events \
     --stack-name my-stack
     
 ```
+- You can also use ```describe-stacks``` call to print the output values from a stack, which may be required to provision other stacks
 
 - To delete a stack, you may use:
 
@@ -49,15 +55,26 @@ $ aws --region ap-south-1 cloudformation delete-stack \
     --stack-name my-stack
 
 ```
-- Step 1: Provision the bucket to replicate to
+
+Specific instructions
+=====
+
+The [stacks](stacks) folder consists of three other folders that each contain
+  - a CloudFormation template: ```template.yaml```
+  - an example file that indicates the parameters required to create a stack using the template: ```parameters.example.json```
+  - a ```metadata.json``` (non-standard) that describes some aspects of the stack that may be provisioned, such as whether capabilites are required to be acknowledged, etc.
+
+The folders have been numbered as a hint to the sequence in which the stacks need to be provisioned. Look at the ```parameters.example.json``` to learn about the parameters which must be supplied when creating the stacks. Defaults have been provided within the templates for some values, but you must substitute the values specific to your environment within the chosen AWS account for other parameters.
+
+- Step 1: Provision the bucket to replicate to (say, in region "ap-northeast-1")
 
 Template and example parameters are in [01-replicate-to-bucket](stacks/01-replicate-to-bucket)
 
-- Step 2: Provision the bucket to replicate from
+- Step 2: Provision the bucket to replicate from (say, in region "ap-south-1")
 
 Template and example parameters are in [02-replicate-from-bucket](stacks/02-replicate-from-bucket)
 
-- Step 3: Provision the EC2 fleet to generate files and put them into the 'source' S3 bucket
+- Step 3: Provision the EC2 fleet to generate files and put them into the 'source' S3 bucket (typically, to the same region as the 'source' bucket)
 
 Template and example parameters are in [03-put-files-in-s3](stacks/03-put-files-in-s3)
 
