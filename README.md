@@ -5,6 +5,9 @@ See [HOW-TO](HOW-TO.md) for instructions.
 TODO
 ====
 
+(Feel free to create an issue)
+
+- [ ] Add support for SSE on bucket using KMS
 - [ ] Provision an S3 VPC endpoint so the instance fleet can just run within a private subnet with minimal network access
 - [ ] Must verify that the inventory is configured correctly and works!
 - [ ] support a mix of files by file size, file count, and file organisation by folders and depth of nesting
