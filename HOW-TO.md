@@ -11,6 +11,12 @@ About
   - The bucket to replicate from (aka 'source') will be provisioned afterwards, in a different AWS region (the second stack), say "ap-south-1", and presumes that the 'destination' bucket exists.
   - The stack that will provision a short-lived fleet of EC2 instances to generate some files and put the same into the S3 bucket will be provisioned in the same region as the 'source' bucket, say "ap-south-1", and presumes that the 'source' bucket exists.
   
+Current limitations
+====
+
+- The fleet of EC2 instances currently only require access to an S3 API endpoint. In the simplest case, this is achieved by launching the fleet in a public subnet and associating public IP addresses. The (arguably better) alternative is to launch the fleet within a private subnet with no special outbound access, and have a VPC endpoint for S3 provisioned and configured for the private subnet.
+- The defaults for the EC2 instance fleet to create and copy files assume defaults that translate into 20 spot instances that each generate 10 files of 2 GB each for a total of 400 GB put into the S3 bucket. You may provision any number of such stacks, or alternatively tweak the CloudFormation templates for these numbers.
+  
 Steps
 ====
 
