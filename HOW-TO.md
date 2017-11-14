@@ -1,25 +1,23 @@
 ## About
 
 - Using the CloudFormation templates, you can provision the following:
-  - A bucket (say, in AWS region 'ap-northeast-1' aka Tokyo) that will be the 'destination' in S3-CRR
-  - Another bucket (say, in AWS region 'ap-south-1' aka Mumbai) that will be the 'source' in S3-CRR
-  - A stack (intended to be short-lived) consisting of a fleet of EC2 spot instances that generate and put a number of "large" files into the source bucket
+  - A bucket (say, in AWS region `ap-northeast-1` aka Tokyo) that will be the 'destination' in S3-CRR
+  - Another bucket (say, in AWS region `ap-south-1` aka Mumbai) that will be the 'source' in S3-CRR
+  - A (short-lived) fleet of EC2 spot instances that generate and put a number of "large" files into the source bucket
   
 - There are good reasons why these are separate stacks (and templates), and must be provisioned in a specific order:
-  - The bucket to replicate to (aka 'destination') will be provisioned first in some AWS region (the first stack), say "ap-northeast-1".
-  - The bucket to replicate from (aka 'source') will be provisioned afterwards, in a different AWS region (the second stack), say "ap-south-1", and presumes that the 'destination' bucket exists.
-  - The stack that will provision a short-lived fleet of EC2 instances to generate some files and put the same into the S3 bucket will be provisioned in the same region as the 'source' bucket, say "ap-south-1", and presumes that the 'source' bucket exists.
+  - The bucket to replicate to (aka 'destination') will be provisioned first in some AWS region (the first stack), say `ap-northeast-1`.
+  - The bucket to replicate from (aka 'source') will be provisioned afterwards, in a different AWS region (the second stack), say `ap-south-1`, and presumes that the 'destination' bucket exists.
+  - A short-lived fleet of EC2 instances to generate some files and put the same into the S3 bucket will be provisioned in the same region as the 'source' bucket, say `ap-south-1`, and presumes that the 'source' bucket exists.
   
 ### Current limitations
 
-
 - The fleet of EC2 instances currently only require access to an S3 API endpoint. In the simplest case, this is achieved by launching the fleet in a public subnet and associating public IP addresses. The (arguably better) alternative is to launch the fleet within a private subnet with no special outbound access, and have a VPC endpoint for S3 provisioned and configured for the private subnet.
-- The defaults for the EC2 instance fleet to create and copy files assume defaults that translate into 20 spot instances that each generate 10 files of 2 GB each for a total of 400 GB put into the S3 bucket. You may provision any number of such stacks, or alternatively tweak the CloudFormation templates for these numbers.
+- The template currently assumes (parameter) defaults for the EC2 instance fleet at 20 spot instances that each generate 10 files of 2 GB each for a total of 400 GB put into the S3 bucket. You may provision any number of such stacks, or alternatively tweak the CloudFormation templates for these numbers.
   
 ## Steps
 
 ### General instructions (for CloudFormation)
-
 
 General instructions to provision CloudFormation stacks:
 
@@ -34,6 +32,7 @@ $ aws --region ap-south-1 cloudformation create-stack \
     ParameterKey=foo,ParameterValue=bar \
 
 ```
+
 - If a stack is creating or modifying IAM resources or permissions, you may need to acknowledge it by supplying capabilities, by adding the following argument to the ```create-stack``` call
 
 ``` --capabilities CAPABILITY_IAM ```
@@ -63,17 +62,17 @@ $ aws --region ap-south-1 cloudformation delete-stack \
 ### Specific instructions
 
 The [stacks](stacks) folder consists of three other folders that each contain
-  - a CloudFormation template: ```template.yaml```
-  - an example file that indicates the parameters required to create a stack using the template: ```parameters.example.json```
-  - a ```metadata.json``` (non-standard) that describes some aspects of the stack that may be provisioned, such as whether capabilites are required to be acknowledged, etc.
+  - a CloudFormation template: `template.yaml`
+  - an example file that indicates the parameters required to create a stack using the template: `parameters.example.json`
+  - a `metadata.json` (non-standard) that describes some aspects of the stack that may be provisioned, such as whether capabilites are required to be acknowledged, etc.
 
-The folders have been numbered as a hint to the sequence in which the stacks need to be provisioned. Look at the ```parameters.example.json``` to learn about the parameters which must be supplied when creating the stacks. Defaults have been provided within the templates for some values, but you must substitute the values specific to your environment within the chosen AWS account for other parameters.
+The folders have been numbered as a hint to the sequence in which the stacks need to be provisioned. Look at the `parameters.example.json` to learn about the parameters which must be supplied when creating the stacks. Defaults have been provided within the templates for some values, but you must substitute the values specific to your environment within the chosen AWS account for other parameters.
 
-- Step 1: Provision the bucket to replicate to (say, in region "ap-northeast-1")
+- Step 1: Provision the bucket to replicate to (say, in region `ap-northeast-1`)
 
 Template and example parameters are in [01-replicate-to-bucket](stacks/01-replicate-to-bucket)
 
-- Step 2: Provision the bucket to replicate from (say, in region "ap-south-1")
+- Step 2: Provision the bucket to replicate from (say, in region `ap-south-1`)
 
 Template and example parameters are in [02-replicate-from-bucket](stacks/02-replicate-from-bucket)
 
