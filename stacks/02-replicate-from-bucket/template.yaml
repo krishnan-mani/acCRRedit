@@ -9,6 +9,8 @@ Outputs:
   replicateFromBucket:
     Description: Bucket that S3 CRR will be setup on
     Value: !Ref 'replicateFromBucket'
+    Export:
+      Name: !Sub "${AWS::StackName}-bucket"
 
 Resources:
   replicateFromBucket:
