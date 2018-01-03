@@ -94,7 +94,10 @@ You can delete the stack that was provisioned to create a fleet of EC2 instances
 
 - Step 5: Monitor the progress of S3 CRR.
 
-[S3 Inventory](http://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html) is turned on for the 'destination' S3 bucket, so you can look at the inventory files when generated to verify which files replicated to the bucket and when.
+
+### TODO
+
+[S3 Inventory](http://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html) when turned on for the 'destination' S3 bucket, will help verify which files replicated to the destination bucket and when.
 
 ### Costs incurred
 
