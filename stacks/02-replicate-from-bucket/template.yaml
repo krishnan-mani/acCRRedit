@@ -1,6 +1,4 @@
-# Generate the bucket we replicate to
 # Generate the bucket we replicate from, and configure CRR between the two
-# Also, setup inventory for both buckets
 
 Parameters:
   replicateToBucket:

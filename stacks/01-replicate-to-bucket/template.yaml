@@ -1,29 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: S3 Bucket with Inventory Configuration
-
-Parameters:
-  inventoryDestination:
-    Description: Bucket that the inventory will be saved to
-    Type: String
+Description: S3 Bucket to replicate to in CRR
 
 Outputs:
-  replicateToBucket:
+  ReplicateToBucketName:
     Description: Bucket created by this stack that we will replicate to
-    Value: !Ref 'S3Bucket'
+    Value: !Ref 'replicateToBucket'
 
 Resources:
-  S3Bucket:
+  replicateToBucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !Join ['-', [!Ref 'AWS::AccountId', !Ref 'AWS::Region', 'replicate', 'to']]
       VersioningConfiguration:
         Status: Enabled
-      InventoryConfigurations:
-        - Id: InventoryConfigurationId
-          Destination:
-            BucketArn: !Join ['', ['arn:aws:s3:::', !Ref inventoryDestination ]]
-            Format: CSV
-            Prefix: InventoryDestinationPrefix
-          Enabled: 'true'
-          IncludedObjectVersions: Current
-          Prefix: InventoryConfigurationPrefix
-          ScheduleFrequency: Daily
