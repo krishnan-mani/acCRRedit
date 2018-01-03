@@ -23,9 +23,6 @@ Parameters:
     Default: 20
     MinValue: 5
     MaxValue: 20
-  Bucket:
-    Description: Bucket to copy files to
-    Type: String
   SpotPrice:
     Description: A price to bid (in USD)
     Type: String
@@ -69,7 +66,8 @@ Resources:
 
             echo "copying files to s3"
             aws configure set region ${AWS::Region}
-            time aws --region ${AWS::Region} s3 cp --recursive --quiet $BASE_PATH s3://${Bucket}/files/
+            export BUCKET_NAME="${AWS::AccountId}-${AWS::Region}-replicate-from"
+            time aws --region ${AWS::Region} s3 cp --recursive --quiet $BASE_PATH s3://$BUCKET_NAME/files/
 
   putFilesGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -117,8 +115,8 @@ Resources:
               -
                 Effect: Allow
                 Resource:
-                  - !Join [ "", [ "arn:aws:s3:::", !Ref 'Bucket' ]]
-                  - !Join [ "", [ "arn:aws:s3:::", !Ref 'Bucket', '/*' ]]
+                  - !Join [ "", [ "arn:aws:s3:::", !Join ['-', [!Ref 'AWS::AccountId', !Ref 'AWS::Region', 'replicate', 'from']] ]]
+                  - !Join [ "", [ "arn:aws:s3:::", !Join ['-', [!Ref 'AWS::AccountId', !Ref 'AWS::Region', 'replicate', 'from']], '/*' ]]
                 Action:
                   - s3:Put*
                   - s3:List*

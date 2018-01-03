@@ -2,3 +2,4 @@ path: stacks
 templates:
   - 01-replicate-to-bucket
   - 02-replicate-from-bucket
+  - 03-put-files-in-s3

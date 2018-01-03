@@ -12,10 +12,6 @@
     "ParameterValue": "10"
   },
   {
-    "ParameterKey": "Bucket",
-    "ParameterValue": "REPLACE-ME-Bucket"
-  },
-  {
     "ParameterKey": "FileSizeInMB",
     "ParameterValue": "2048"
   },
