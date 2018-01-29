@@ -15,3 +15,4 @@ TODO
 - [ ] use multi-part upload and other speedier ways to upload large files to s3
 - [ ] provide a way to estimate costs, including an upper bound on costs
 - [ ] add links in documentation to pricing
+- [ ] tear down spot instance fleets after writing file payloads
